@@ -43,8 +43,6 @@ moveInvaders input ps =
       moveX = round <| direction * 1
   in map (moveInvader moveX 0) ps
 
--- strategy: pipe transformations?
-
 movePlayer : Input -> Player -> Player
 movePlayer input player =
   { player | x <- player.x + 10 * toFloat input.x }
@@ -53,11 +51,10 @@ movePlayer input player =
 update : Input -> GameState -> GameState
 update input state =
   let interval = if state.time == 0.0 then 0.0 else input.time - state.time
-  --{ state | invaders <- map (movePiece input.x input.y) state.invaders }
   in
-  { state | player <- movePlayer input state.player }
-  |> (\s -> { s | invaders <- moveInvaders input s.invaders })
-  |> (\s -> { s | time <- input.time })
+  { state | player <- movePlayer input state.player
+          , invaders <- moveInvaders input state.invaders
+          , time <- input.time }
 
 -- INPUT ----------------------------------
 
