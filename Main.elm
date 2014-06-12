@@ -5,9 +5,11 @@ import Graphics.Collage
 -- CONSTANTS ----------------------------------
 
 unitWidth = 50
-gameWidth = 700
-gameHeight = 700
+gameWidth = 500
+gameHeight = 500
 bgColor = black
+ticksPerSecond = 20
+tickPeriod = Time.second / 20 -- 10/sec
 
 -- STATE ----------------------------------
 
@@ -36,8 +38,8 @@ moveInvader dx dy p = { p | x <- p.x + toFloat dx, y <- p.y + toFloat dy }
 
 moveInvaders : Input -> [Invader] -> [Invader]
 moveInvaders input ps = 
-  let direction = if cos (toFloat input.counter) > 0 then 1 else -1
-      moveX = round <| direction * 10
+  let direction = if cos (toFloat (input.counter `div` ticksPerSecond)) > 0 then 1 else -1
+      moveX = round <| direction * 1
   in map (moveInvader moveX 0) ps
 
 -- strategy: pipe transformations?
@@ -57,7 +59,7 @@ update input state =
 
 type Input = {x: Int, y: Int, space: Bool, counter: Int }
 
-counter = foldp (\_ c -> c + 1) 0 (Time.every Time.second)
+counter = foldp (\_ c -> c + 1) 0 (Time.every tickPeriod)
 
 combineInput : { x: Int, y: Int} -> Bool -> Int -> Input
 combineInput arrows space counter =
