@@ -1,4 +1,5 @@
 import Time
+import Signal
 import Keyboard
 import Graphics.Collage
 
@@ -13,7 +14,7 @@ tickPeriod = Time.second / 20 -- 10/sec
 
 -- STATE ----------------------------------
 
-type GameState = { invaders: [Invader], player : Player }
+type GameState = { invaders: [Invader], player: Player, time: Time }
 
 type Invader = { x: Float, y: Float, dx: Float, dy: Float }
 
@@ -29,7 +30,7 @@ player : Player
 player = { x = 0, y = -200, dx = 0, dy = 0 }
 
 state : GameState
-state = { invaders = invaders, player = player }
+state = { invaders = invaders, player = player, time = 0.0 }
 
 -- UPDATE ----------------------------------
 
@@ -51,22 +52,28 @@ movePlayer input player =
 
 update : Input -> GameState -> GameState
 update input state =
+  let interval = if state.time == 0.0 then 0.0 else input.time - state.time
   --{ state | invaders <- map (movePiece input.x input.y) state.invaders }
+  in
   { state | player <- movePlayer input state.player }
   |> (\s -> { s | invaders <- moveInvaders input s.invaders })
+  |> (\s -> { s | time <- input.time })
 
 -- INPUT ----------------------------------
 
-type Input = {x: Int, y: Int, space: Bool, counter: Int }
+type Input = { x: Int, y: Int, space: Bool
+             , counter: Int, time: Time}
 
 counter = foldp (\_ c -> c + 1) 0 (Time.every tickPeriod)
+time = Time.timestamp (Signal.constant 0) |> lift (\(t, _) -> t)
 
-combineInput : { x: Int, y: Int} -> Bool -> Int -> Input
-combineInput arrows space counter =
-  { x = arrows.x, y = arrows.y, space = space, counter = counter }
+combineInput : { x: Int, y: Int} -> Bool -> Int -> Time -> Input
+combineInput arrows space counter time =
+  { x = arrows.x, y = arrows.y, space = space
+  , counter = counter, time = time }
 
 input : Signal Input
-input = lift3 combineInput Keyboard.arrows Keyboard.space counter
+input = lift4 combineInput Keyboard.arrows Keyboard.space counter time
 
 -- DISPLAY ----------------------------------
 
