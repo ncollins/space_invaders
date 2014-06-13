@@ -24,7 +24,7 @@ type Bullet = { x: Float, y: Float, dx: Float, dy: Float }
 
 initialPositions = map (\x -> (x*30 - 200, 200)) [1..10]
 
-invaders = map (\n -> { x = n*unitWidth - 250, y = 200, dx = 1, dy = 0 }) [1..8]
+invaders = map (\n -> { x = n*unitWidth - 250, y = 200, dx = 10, dy = 0 }) [1..8]
 
 player : Player
 player = { x = 0, y = -200, dx = 0, dy = 0 }
@@ -44,8 +44,8 @@ moveInvaders time invaders =
   let leftMost = (head invaders).x
       rightMost = (last invaders).x
   in
-  if | leftMost < 10               -> map (moveInvader time -1.0) invaders
-     | rightMost > gameWidth - 10  -> map (moveInvader time -1.0) invaders
+  if | leftMost < -200              -> map (moveInvader time -1.0) invaders
+     | rightMost > 200  -> map (moveInvader time -1.0) invaders
      | otherwise                   -> map (moveInvader time 1.0) invaders
 
 movePlayer : Input -> Player -> Player
