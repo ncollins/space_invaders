@@ -14,7 +14,7 @@ tickPeriod = Time.second / 20 -- 10/sec
 
 -- STATE ----------------------------------
 
-type GameState = { invaders: [Invader], player: Player, time: Time }
+type GameState = { invaders: [Invader], player: Player, time: Time, input: Input }
 
 type Invader = { x: Float, y: Float, dx: Float, dy: Float }
 
@@ -24,24 +24,29 @@ type Bullet = { x: Float, y: Float, dx: Float, dy: Float }
 
 initialPositions = map (\x -> (x*30 - 200, 200)) [1..10]
 
-invaders = map (\n -> { x = n*unitWidth - 250, y = 200, dx = 0, dy = 0 }) [1..8]
+invaders = map (\n -> { x = n*unitWidth - 250, y = 200, dx = 1, dy = 0 }) [1..8]
 
 player : Player
 player = { x = 0, y = -200, dx = 0, dy = 0 }
 
 state : GameState
-state = { invaders = invaders, player = player, time = 0.0 }
+state = { invaders = invaders, player = player, time = 0.0
+        , input = { x = 0, y = 0, space = False, counter = 0, time = 0 }}
 
 -- UPDATE ----------------------------------
 
-moveInvader : Int -> Int -> Invader -> Invader
-moveInvader dx dy p = { p | x <- p.x + toFloat dx, y <- p.y + toFloat dy }
+moveInvader : Time -> Float -> Invader -> Invader
+moveInvader time direction i =
+  { i | x <- i.x + i.dx * time, dx <- i.dx * direction }
 
-moveInvaders : Input -> [Invader] -> [Invader]
-moveInvaders input ps = 
-  let direction = if cos (toFloat (input.counter `div` ticksPerSecond)) > 0 then 1 else -1
-      moveX = round <| direction * 1
-  in map (moveInvader moveX 0) ps
+moveInvaders : Time -> [Invader] -> [Invader]
+moveInvaders time invaders = 
+  let leftMost = (head invaders).x
+      rightMost = (last invaders).x
+  in
+  if | leftMost < 10               -> map (moveInvader time -1.0) invaders
+     | rightMost > gameWidth - 10  -> map (moveInvader time -1.0) invaders
+     | otherwise                   -> map (moveInvader time 1.0) invaders
 
 movePlayer : Input -> Player -> Player
 movePlayer input player =
@@ -50,11 +55,12 @@ movePlayer input player =
 
 update : Input -> GameState -> GameState
 update input state =
-  let interval = if state.time == 0.0 then 0.0 else input.time - state.time
+  let interval = if state.time == 0.0 then 0.0 else (input.time - state.time) / 1000
   in
   { state | player <- movePlayer input state.player
-          , invaders <- moveInvaders input state.invaders
-          , time <- input.time }
+          , invaders <- moveInvaders interval state.invaders
+          , time <- input.time
+          , input <- input }
 
 -- INPUT ----------------------------------
 
@@ -62,7 +68,7 @@ type Input = { x: Int, y: Int, space: Bool
              , counter: Int, time: Time}
 
 counter = foldp (\_ c -> c + 1) 0 (Time.every tickPeriod)
-time = Time.timestamp (Signal.constant 0) |> lift (\(t, _) -> t)
+time = Time.timestamp counter |> lift fst
 
 combineInput : { x: Int, y: Int} -> Bool -> Int -> Time -> Input
 combineInput arrows space counter time =
@@ -96,7 +102,9 @@ display : GameState -> Element
 display s = let is = map displayInvader s.invaders
                 p = displayPlayer s.player
                 background = filled bgColor (rect gameWidth gameHeight)
-            in collage gameWidth gameHeight <| [background, p] ++ is
+                timer = Graphics.Collage.toForm (asText s.input)
+                r = filled white (rect 500 30)
+            in collage gameWidth gameHeight <| [background, p] ++ is ++ [r, timer]
 
 -- MAIN ----------------------------------
 
