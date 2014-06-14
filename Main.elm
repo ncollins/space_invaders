@@ -1,6 +1,7 @@
 import Time
 import Signal
 import Keyboard
+import List
 import Graphics.Collage
 
 -- CONSTANTS ----------------------------------
@@ -24,7 +25,7 @@ type Invader = { x: Float, y: Float, dx: Float, dy: Float }
 
 type Player = { x: Float, y: Float, dx: Float, dy: Float }
 
-type Bullet = { x: Float, y: Float, dx: Float, dy: Float }
+type Bullet = { x: Float, y: Float, dx: Float, dy: Float, shotAt: Time }
 
 invaders = map (\n -> { x = n*unitWidth - 250, y = 200, dx = 10, dy = 0 }) [1..8]
 
@@ -39,6 +40,8 @@ state = { invaders = invaders
         , input = { x = 0, y = 0, space = False, counter = 0, time = 0 }}
 
 -- UPDATE ----------------------------------
+
+inGameArea e = (abs e.x < gameWidth/2) && abs e.y < gameHeight/2
 
 moveInvader : Time -> Float -> Invader -> Invader
 moveInvader time direction i =
@@ -57,14 +60,25 @@ movePlayer : Input -> Player -> Player
 movePlayer input player =
   { player | x <- player.x + 10 * toFloat input.x }
   
+updateBullets : Float -> GameState -> Input -> [Bullet] -> [Bullet]
+updateBullets interval s i bs =
+  let move b = {b | y <- b.y + interval * b.dy }
+      someBullets = not (List.isEmpty bs)
+      lastShot = if someBullets  then Just (head bs).shotAt else Nothing
+      newBullet = case (i.space, lastShot) of
+                        (False, _)      -> Nothing
+                        (True, Just t)  -> if (i.time - t) < 500 -- MAGIC
+                                           then Nothing
+                                           else Just { x = s.player.x, y = s.player.y, dx = 0, dy = 100, shotAt = i.time }
+                        (True, Nothing) -> Just { x = s.player.x, y = s.player.y, dx = 0, dy = 100, shotAt = i.time }
+  in case newBullet of
+     Nothing -> (filter inGameArea . map move) bs
+     Just b -> (filter inGameArea . map move) (b::bs)
 
 update : Input -> GameState -> GameState
 update input state =
   let interval = if state.time == 0.0 then 0.0 else (input.time - state.time) / 1000
-      move_bullets = map (\b -> {b | y <- b.y + interval * b.dy }) state.bullets
-      bullets = if input.space
-                then { x = state.player.x, y = state.player.y, dy = 100, dx = 0 } :: move_bullets
-                else move_bullets
+      bullets = updateBullets interval state input state.bullets
   in
   { state | player <- movePlayer input state.player
           , invaders <- moveInvaders interval state.invaders
