@@ -14,7 +14,11 @@ tickPeriod = Time.second / 20 -- 10/sec
 
 -- STATE ----------------------------------
 
-type GameState = { invaders: [Invader], player: Player, time: Time, input: Input }
+type GameState = { invaders: [Invader]
+                 , player: Player
+                 , bullets: [Bullet]
+                 , time: Time
+                 , input: Input }
 
 type Invader = { x: Float, y: Float, dx: Float, dy: Float }
 
@@ -28,7 +32,10 @@ player : Player
 player = { x = 0, y = -200, dx = 0, dy = 0 }
 
 state : GameState
-state = { invaders = invaders, player = player, time = 0.0
+state = { invaders = invaders
+        ,  player = player
+        , bullets = []
+        , time = 0.0
         , input = { x = 0, y = 0, space = False, counter = 0, time = 0 }}
 
 -- UPDATE ----------------------------------
@@ -54,11 +61,16 @@ movePlayer input player =
 update : Input -> GameState -> GameState
 update input state =
   let interval = if state.time == 0.0 then 0.0 else (input.time - state.time) / 1000
+      move_bullets = map (\b -> {b | y <- b.y + interval * b.dy }) state.bullets
+      bullets = if input.space
+                then { x = state.player.x, y = state.player.y, dy = 100, dx = 0 } :: move_bullets
+                else move_bullets
   in
   { state | player <- movePlayer input state.player
           , invaders <- moveInvaders interval state.invaders
           , time <- input.time
-          , input <- input }
+          , input <- input 
+          , bullets <- bullets}
 
 -- INPUT ----------------------------------
 
@@ -96,13 +108,16 @@ displayPlayer p = let translate = move (p.x, p.y)
                       turn = rotate (degrees 90)
                   in (translate . turn) (filled blue (ngon 3 20))
 
+displayBullet b = move (b.x, b.y) (filled green (rect 2 10))
+
 display : GameState -> Element
 display s = let is = map displayInvader s.invaders
                 p = displayPlayer s.player
+                bullets = map displayBullet s.bullets
                 background = filled bgColor (rect gameWidth gameHeight)
                 timer = Graphics.Collage.toForm (asText s.input)
                 r = filled white (rect 500 30)
-            in collage gameWidth gameHeight <| [background, p] ++ is ++ [r, timer]
+            in collage gameWidth gameHeight <| [background, p] ++ is ++ bullets ++ [r, timer]
 
 -- MAIN ----------------------------------
 
