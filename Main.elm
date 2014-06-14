@@ -74,14 +74,19 @@ updateBullets interval s i bs =
   in case newBullet of
      Nothing -> (filter inGameArea . map move) bs
      Just b -> (filter inGameArea . map move) (b::bs)
+     
+hit e1 e2 = abs (e1.x - e2.x) < 20 && abs (e1.y - e2.y) < 10 -- MAGIC
 
 update : Input -> GameState -> GameState
 update input state =
   let interval = if state.time == 0.0 then 0.0 else (input.time - state.time) / 1000
       bullets = updateBullets interval state input state.bullets
+      (deadVader, liveVader) = if List.isEmpty state.invaders
+                               then ([],[])
+                               else List.partition (\v -> List.any (hit v) bullets) (moveInvaders interval state.invaders)
   in
   { state | player <- movePlayer input state.player
-          , invaders <- moveInvaders interval state.invaders
+          , invaders <- liveVader
           , time <- input.time
           , input <- input 
           , bullets <- bullets}
