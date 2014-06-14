@@ -22,8 +22,6 @@ type Player = { x: Float, y: Float, dx: Float, dy: Float }
 
 type Bullet = { x: Float, y: Float, dx: Float, dy: Float }
 
-initialPositions = map (\x -> (x*30 - 200, 200)) [1..10]
-
 invaders = map (\n -> { x = n*unitWidth - 250, y = 200, dx = 10, dy = 0 }) [1..8]
 
 player : Player
