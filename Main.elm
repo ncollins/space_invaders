@@ -41,12 +41,12 @@ moveInvader time direction i =
 
 moveInvaders : Time -> [Invader] -> [Invader]
 moveInvaders time invaders = 
-  let leftMost = (head invaders).x
-      rightMost = (last invaders).x
+  let l = (head invaders)
+      r = (last invaders)
   in
-  if | leftMost < -200              -> map (moveInvader time -1.0) invaders
-     | rightMost > 200  -> map (moveInvader time -1.0) invaders
-     | otherwise                   -> map (moveInvader time 1.0) invaders
+  if | l.x < -200 && l.dx < 0  -> map (moveInvader time -1.0) invaders
+     | r.x > 200 && r.dx > 0   -> map (moveInvader time -1.0) invaders
+     | otherwise               -> map (moveInvader time 1.0) invaders
 
 movePlayer : Input -> Player -> Player
 movePlayer input player =
