@@ -1,0 +1,440 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="UTF-8"><title>Main</title><script type="text/javascript" src="elm/elm-runtime.js"></script><script type="text/javascript">Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values)
+   return _elm.Main.values;
+   var _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _E = _N.Error.make(_elm),
+   _J = _N.JavaScript.make(_elm),
+   $moduleName = "Main";
+   var Basics = Elm.Basics.make(_elm);
+   var Color = Elm.Color.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Collage = Elm.Graphics.Collage.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Element = Elm.Graphics.Element.make(_elm);
+   var Keyboard = Elm.Keyboard.make(_elm);
+   var List = Elm.List.make(_elm);
+   var Maybe = Elm.Maybe.make(_elm);
+   var Native = Native || {};
+   Native.Ports = Elm.Native.Ports.make(_elm);
+   var Signal = Elm.Signal.make(_elm);
+   var String = Elm.String.make(_elm);
+   var Text = Elm.Text.make(_elm);
+   var Time = Elm.Time.make(_elm);
+   var _op = {};
+   var displayBullet = function (b) {
+      return A2(Graphics.Collage.move,
+      {ctor: "_Tuple2"
+      ,_0: b.x
+      ,_1: b.y},
+      A2(Graphics.Collage.filled,
+      Color.green,
+      A2(Graphics.Collage.rect,
+      2,
+      10)));
+   };
+   var displayPlayer = function (p) {
+      return function () {
+         var turn = Graphics.Collage.rotate(Basics.degrees(90));
+         var translate = Graphics.Collage.move({ctor: "_Tuple2"
+                                               ,_0: p.x
+                                               ,_1: p.y});
+         return function ($) {
+            return translate(turn($));
+         }(A2(Graphics.Collage.filled,
+         Color.blue,
+         A2(Graphics.Collage.ngon,
+         3,
+         20)));
+      }();
+   };
+   var invader = F2(function (fg,
+   bg) {
+      return Graphics.Collage.scale(4 / 5)(Graphics.Collage.group(_J.toList([A2(Graphics.Collage.filled,
+                                                                            fg,
+                                                                            A2(Graphics.Collage.oval,
+                                                                            50,
+                                                                            40))
+                                                                            ,A2(Graphics.Collage.move,
+                                                                            {ctor: "_Tuple2"
+                                                                            ,_0: 0
+                                                                            ,_1: -10},
+                                                                            A2(Graphics.Collage.filled,
+                                                                            bg,
+                                                                            A2(Graphics.Collage.rect,
+                                                                            30,
+                                                                            20)))
+                                                                            ,A2(Graphics.Collage.move,
+                                                                            {ctor: "_Tuple2"
+                                                                            ,_0: 8
+                                                                            ,_1: 10},
+                                                                            A2(Graphics.Collage.filled,
+                                                                            bg,
+                                                                            A2(Graphics.Collage.rect,
+                                                                            10,
+                                                                            5)))
+                                                                            ,A2(Graphics.Collage.move,
+                                                                            {ctor: "_Tuple2"
+                                                                            ,_0: -8
+                                                                            ,_1: 10},
+                                                                            A2(Graphics.Collage.filled,
+                                                                            bg,
+                                                                            A2(Graphics.Collage.rect,
+                                                                            10,
+                                                                            5)))
+                                                                            ,A2(Graphics.Collage.move,
+                                                                            {ctor: "_Tuple2"
+                                                                            ,_0: 0
+                                                                            ,_1: -7},
+                                                                            A2(Graphics.Collage.filled,
+                                                                            fg,
+                                                                            A2(Graphics.Collage.rect,
+                                                                            5,
+                                                                            15)))
+                                                                            ,A2(Graphics.Collage.move,
+                                                                            {ctor: "_Tuple2"
+                                                                            ,_0: 8
+                                                                            ,_1: -7},
+                                                                            A2(Graphics.Collage.filled,
+                                                                            fg,
+                                                                            A2(Graphics.Collage.rect,
+                                                                            5,
+                                                                            15)))
+                                                                            ,A2(Graphics.Collage.move,
+                                                                            {ctor: "_Tuple2"
+                                                                            ,_0: -8
+                                                                            ,_1: -7},
+                                                                            A2(Graphics.Collage.filled,
+                                                                            fg,
+                                                                            A2(Graphics.Collage.rect,
+                                                                            5,
+                                                                            15)))])));
+   });
+   var combineInput = F4(function (arrows,
+   space,
+   counter,
+   time) {
+      return {_: {}
+             ,counter: counter
+             ,space: space
+             ,time: time
+             ,x: arrows.x
+             ,y: arrows.y};
+   });
+   var Input = F5(function (a,
+   b,
+   c,
+   d,
+   e) {
+      return {_: {}
+             ,counter: d
+             ,space: c
+             ,time: e
+             ,x: a
+             ,y: b};
+   });
+   var hit = F2(function (e1,e2) {
+      return _U.cmp(Basics.abs(e1.x - e2.x),
+      20) < 0 && _U.cmp(Basics.abs(e1.y - e2.y),
+      10) < 0;
+   });
+   var movePlayer = F2(function (input,
+   player) {
+      return _U.replace([["x"
+                         ,player.x + 10 * Basics.toFloat(input.x)]],
+      player);
+   });
+   var moveInvader = F3(function (time,
+   direction,
+   i) {
+      return _U.replace([["x"
+                         ,i.x + i.dx * time]
+                        ,["dx",i.dx * direction]],
+      i);
+   });
+   var moveInvaders = F2(function (time,
+   invaders) {
+      return function () {
+         var r = List.last(invaders);
+         var l = List.head(invaders);
+         return _U.cmp(l.x,
+         -200) < 0 && _U.cmp(l.dx,
+         0) < 0 ? A2(List.map,
+         A2(moveInvader,time,-1.0),
+         invaders) : _U.cmp(r.x,
+         200) > 0 && _U.cmp(r.dx,
+         0) > 0 ? A2(List.map,
+         A2(moveInvader,time,-1.0),
+         invaders) : A2(List.map,
+         A2(moveInvader,time,1.0),
+         invaders);
+      }();
+   });
+   var player = {_: {}
+                ,dx: 0
+                ,dy: 0
+                ,x: 0
+                ,y: -200};
+   var Bullet = F5(function (a,
+   b,
+   c,
+   d,
+   e) {
+      return {_: {}
+             ,dx: c
+             ,dy: d
+             ,shotAt: e
+             ,x: a
+             ,y: b};
+   });
+   var Player = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,dx: c
+             ,dy: d
+             ,x: a
+             ,y: b};
+   });
+   var Invader = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,dx: c
+             ,dy: d
+             ,x: a
+             ,y: b};
+   });
+   var GameState = F5(function (a,
+   b,
+   c,
+   d,
+   e) {
+      return {_: {}
+             ,bullets: c
+             ,input: e
+             ,invaders: a
+             ,player: b
+             ,time: d};
+   });
+   var tickPeriod = Time.second / 20;
+   var counter = A3(Signal.foldp,
+   F2(function (_v0,c) {
+      return function () {
+         return c + 1;
+      }();
+   }),
+   0,
+   Time.every(tickPeriod));
+   var time = Signal.lift(Basics.fst)(Time.timestamp(counter));
+   var input = A5(Signal.lift4,
+   combineInput,
+   Keyboard.arrows,
+   Keyboard.space,
+   counter,
+   time);
+   var ticksPerSecond = 20;
+   var bgColor = Color.black;
+   var displayInvader = function (i) {
+      return A2(Graphics.Collage.move,
+      {ctor: "_Tuple2"
+      ,_0: i.x
+      ,_1: i.y},
+      A2(invader,Color.red,bgColor));
+   };
+   var gameHeight = 500;
+   var gameWidth = 500;
+   var inGameArea = function (e) {
+      return _U.cmp(Basics.abs(e.x),
+      gameWidth / 2) < 0 && _U.cmp(Basics.abs(e.y),
+      gameHeight / 2) < 0;
+   };
+   var updateBullets = F4(function (interval,
+   s,
+   i,
+   bs) {
+      return function () {
+         var someBullets = Basics.not(List.isEmpty(bs));
+         var lastShot = someBullets ? Maybe.Just(List.head(bs).shotAt) : Maybe.Nothing;
+         var newBullet = function () {
+            var _v2 = {ctor: "_Tuple2"
+                      ,_0: i.space
+                      ,_1: lastShot};
+            switch (_v2.ctor)
+            {case "_Tuple2": switch (_v2._0)
+                 {case false:
+                    return Maybe.Nothing;
+                    case true: switch (_v2._1.ctor)
+                      {case "Just":
+                         return _U.cmp(i.time - _v2._1._0,
+                           500) < 0 ? Maybe.Nothing : Maybe.Just({_: {}
+                                                                 ,dx: 0
+                                                                 ,dy: 100
+                                                                 ,shotAt: i.time
+                                                                 ,x: s.player.x
+                                                                 ,y: s.player.y});
+                         case "Nothing":
+                         return Maybe.Just({_: {}
+                                           ,dx: 0
+                                           ,dy: 100
+                                           ,shotAt: i.time
+                                           ,x: s.player.x
+                                           ,y: s.player.y});}
+                      break;}
+                 break;}
+            _E.Case($moduleName,
+            "between lines 68 and 74");
+         }();
+         var move = function (b) {
+            return _U.replace([["y"
+                               ,b.y + interval * b.dy]],
+            b);
+         };
+         return function () {
+            switch (newBullet.ctor)
+            {case "Just":
+               return function ($) {
+                    return List.filter(inGameArea)(List.map(move)($));
+                 }({ctor: "::"
+                   ,_0: newBullet._0
+                   ,_1: bs});
+               case "Nothing":
+               return function ($) {
+                    return List.filter(inGameArea)(List.map(move)($));
+                 }(bs);}
+            _E.Case($moduleName,
+            "between lines 74 and 77");
+         }();
+      }();
+   });
+   var update = F2(function (input,
+   state) {
+      return function () {
+         var interval = _U.eq(state.time,
+         0.0) ? 0.0 : (input.time - state.time) / 1000;
+         var bullets = A4(updateBullets,
+         interval,
+         state,
+         input,
+         state.bullets);
+         var $ = List.isEmpty(state.invaders) ? {ctor: "_Tuple2"
+                                                ,_0: _J.toList([])
+                                                ,_1: _J.toList([])} : A2(List.partition,
+         function (v) {
+            return A2(List.any,
+            hit(v),
+            bullets);
+         },
+         A2(moveInvaders,
+         interval,
+         state.invaders)),
+         deadVader = $._0,
+         liveVader = $._1;
+         return _U.replace([["player"
+                            ,A2(movePlayer,
+                            input,
+                            state.player)]
+                           ,["invaders",liveVader]
+                           ,["time",input.time]
+                           ,["input",input]
+                           ,["bullets",bullets]],
+         state);
+      }();
+   });
+   var display = function (s) {
+      return function () {
+         var r = A2(Graphics.Collage.filled,
+         Color.white,
+         A2(Graphics.Collage.rect,
+         500,
+         30));
+         var timer = Graphics.Collage.toForm(Text.asText(s.input));
+         var background = A2(Graphics.Collage.filled,
+         bgColor,
+         A2(Graphics.Collage.rect,
+         gameWidth,
+         gameHeight));
+         var bullets = A2(List.map,
+         displayBullet,
+         s.bullets);
+         var p = displayPlayer(s.player);
+         var is = A2(List.map,
+         displayInvader,
+         s.invaders);
+         return A2(Graphics.Collage.collage,
+         gameWidth,
+         gameHeight)(_L.append(_J.toList([background
+                                         ,p]),
+         _L.append(is,
+         _L.append(bullets,
+         _J.toList([r,timer])))));
+      }();
+   };
+   var unitWidth = 50;
+   var invaders = A2(List.map,
+   function (n) {
+      return {_: {}
+             ,dx: 10
+             ,dy: 0
+             ,x: n * unitWidth - 250
+             ,y: 200};
+   },
+   _L.range(1,8));
+   var state = {_: {}
+               ,bullets: _J.toList([])
+               ,input: {_: {}
+                       ,counter: 0
+                       ,space: false
+                       ,time: 0
+                       ,x: 0
+                       ,y: 0}
+               ,invaders: invaders
+               ,player: player
+               ,time: 0.0};
+   var main = A2(Signal.lift,
+   display,
+   A3(Signal.foldp,
+   update,
+   state,
+   input));
+   _elm.Main.values = {_op: _op
+                      ,unitWidth: unitWidth
+                      ,gameWidth: gameWidth
+                      ,gameHeight: gameHeight
+                      ,bgColor: bgColor
+                      ,ticksPerSecond: ticksPerSecond
+                      ,tickPeriod: tickPeriod
+                      ,invaders: invaders
+                      ,player: player
+                      ,state: state
+                      ,inGameArea: inGameArea
+                      ,moveInvader: moveInvader
+                      ,moveInvaders: moveInvaders
+                      ,movePlayer: movePlayer
+                      ,updateBullets: updateBullets
+                      ,hit: hit
+                      ,update: update
+                      ,counter: counter
+                      ,time: time
+                      ,combineInput: combineInput
+                      ,input: input
+                      ,invader: invader
+                      ,displayInvader: displayInvader
+                      ,displayPlayer: displayPlayer
+                      ,displayBullet: displayBullet
+                      ,display: display
+                      ,main: main
+                      ,GameState: GameState
+                      ,Invader: Invader
+                      ,Player: Player
+                      ,Bullet: Bullet
+                      ,Input: Input};
+   return _elm.Main.values;
+};</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script><noscript></noscript></body></html>
