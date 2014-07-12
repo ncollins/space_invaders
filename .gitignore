@@ -1,1 +1,4 @@
 cache/*
+src/cache/*
+src/build/*
+*.swo
