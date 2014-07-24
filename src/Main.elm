@@ -20,6 +20,8 @@ tickPeriod = Time.second / 20 -- 10/sec
 
 -- STATE ----------------------------------
 
+data State = GameOver Int | Game GameState
+
 type GameState = { invaders: [Invader]
                  , player: Player
                  , bullets: [Bullet]
@@ -38,8 +40,8 @@ invaders = map (\n -> { x = n*unitWidth - 250, y = 200, dx = 10, dy = 0 }) [1..8
 player : Player
 player = { x = 0, y = -200, dx = 0, dy = 0 }
 
-state : GameState
-state = { invaders = invaders
+start : GameState
+start = { invaders = invaders
         ,  player = player
         , bullets = []
         , time = 0.0
@@ -87,8 +89,8 @@ updateBullets interval s i bs =
      
 hit e1 e2 = abs (e1.x - e2.x) < 20 && abs (e1.y - e2.y) < 10 -- MAGIC
 
-update : Input -> GameState -> GameState
-update input state =
+updateGame : Input -> GameState -> GameState
+updateGame input state =
   let interval = if state.time == 0.0 then 0.0 else (input.time - state.time) / 1000
       bullets = updateBullets interval state input state.bullets
       (deadVader, liveVader) = if List.isEmpty state.invaders
@@ -99,7 +101,16 @@ update input state =
           , invaders <- liveVader
           , time <- input.time
           , input <- input 
-          , bullets <- bullets}
+          , bullets <- bullets
+          , score <- state.score + (length deadVader)}
+
+update : Input -> State -> State
+update input state =
+    case state of
+        GameOver s  -> GameOver s
+        Game prev   -> let new = updateGame input prev
+                    in
+                       if new.score < 8 then Game new else GameOver new.score
 
 -- INPUT ----------------------------------
 
@@ -140,7 +151,7 @@ displayBullet b = move (b.x, b.y) (filled green (rect 2 10))
 
 displayGameStatus top s =
     let background = filled lightGreen (rect 500 30)
-        text = (Graphics.Collage.toForm . asText) s.input
+        text = (Graphics.Collage.toForm . asText) s.score
     in map (move (0, top)) [background, text]
 
 displayDebugInfo top s =
@@ -148,15 +159,21 @@ displayDebugInfo top s =
         text = (Graphics.Collage.toForm . asText) s.input
     in map (move (0, top)) [background, text]
 
-display : GameState -> Element
-display s = let is = map displayInvader s.invaders
-                p = displayPlayer s.player
-                bullets = map displayBullet s.bullets
-                background = filled bgColor (rect gameWidth totalHeight)
-                status = displayGameStatus (45 - totalHeight/2) s
-                debug = displayDebugInfo (15 - totalHeight/2) s 
-            in collage gameWidth totalHeight <| [background, p] ++ is ++ bullets ++ status ++ debug
+displayGame : GameState -> Element
+displayGame s = let is = map displayInvader s.invaders
+                    p = displayPlayer s.player
+                    bullets = map displayBullet s.bullets
+                    background = filled bgColor (rect gameWidth totalHeight)
+                    status = displayGameStatus (45 - totalHeight/2) s
+                    debug = displayDebugInfo (15 - totalHeight/2) s 
+                in collage gameWidth totalHeight <| [background, p] ++ is ++ bullets ++ status ++ debug
+
+display : State -> Element
+display state =
+    case state of
+        GameOver score -> asText score
+        Game s   -> displayGame s
 
 -- MAIN ----------------------------------
 
-main = lift display (foldp update state input)
+main = lift display (foldp update (Game start) input)
