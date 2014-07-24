@@ -63,9 +63,12 @@ moveInvaders time invaders =
      | r.x > 200 && r.dx > 0   -> map (moveInvader time -1.0) invaders
      | otherwise               -> map (moveInvader time 1.0) invaders
 
+
 movePlayer : Input -> Player -> Player
 movePlayer input player =
-  { player | x <- player.x + 10 * toFloat input.x }
+  let bound x = max (20 - gameWidth/2) (min x (gameWidth/2 - 20))
+  in
+  { player | x <- bound <| player.x + 10 * toFloat input.x }
   
 updateBullets : Float -> GameState -> Input -> [Bullet] -> [Bullet]
 updateBullets interval s i bs =
