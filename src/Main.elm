@@ -3,12 +3,17 @@ import Signal
 import Keyboard
 import List
 import Graphics.Collage
+import Text
 
 -- CONSTANTS ----------------------------------
 
 unitWidth = 50
 gameWidth = 500
 gameHeight = 500
+statusHeight = 30
+debugHeight = 30
+totalHeight = gameHeight + statusHeight + debugHeight
+
 bgColor = black
 ticksPerSecond = 20
 tickPeriod = Time.second / 20 -- 10/sec
@@ -19,7 +24,8 @@ type GameState = { invaders: [Invader]
                  , player: Player
                  , bullets: [Bullet]
                  , time: Time
-                 , input: Input }
+                 , input: Input
+                 , score: Int }
 
 type Invader = { x: Float, y: Float, dx: Float, dy: Float }
 
@@ -37,7 +43,8 @@ state = { invaders = invaders
         ,  player = player
         , bullets = []
         , time = 0.0
-        , input = { x = 0, y = 0, space = False, counter = 0, time = 0 }}
+        , input = { x = 0, y = 0, space = False, counter = 0, time = 0 }
+        , score = 0 }
 
 -- UPDATE ----------------------------------
 
@@ -119,7 +126,6 @@ invader fg bg = group [(filled fg (oval 50 40))
                       ] |> Graphics.Collage.scale (4/5)
 
 displayInvader : Invader -> Form
---displayInvader i = move (i.x, i.y) (filled red (square 20))
 displayInvader i = move (i.x, i.y) (invader red bgColor)
 
 displayPlayer : Player -> Form
@@ -129,14 +135,24 @@ displayPlayer p = let translate = move (p.x, p.y)
 
 displayBullet b = move (b.x, b.y) (filled green (rect 2 10))
 
+displayGameStatus top s =
+    let background = filled lightGreen (rect 500 30)
+        text = (Graphics.Collage.toForm . asText) s.input
+    in map (move (0, top)) [background, text]
+
+displayDebugInfo top s =
+    let background = filled grey (rect 500 30)
+        text = (Graphics.Collage.toForm . asText) s.input
+    in map (move (0, top)) [background, text]
+
 display : GameState -> Element
 display s = let is = map displayInvader s.invaders
                 p = displayPlayer s.player
                 bullets = map displayBullet s.bullets
-                background = filled bgColor (rect gameWidth gameHeight)
-                timer = Graphics.Collage.toForm (asText s.input)
-                r = filled white (rect 500 30)
-            in collage gameWidth gameHeight <| [background, p] ++ is ++ bullets ++ [r, timer]
+                background = filled bgColor (rect gameWidth totalHeight)
+                status = displayGameStatus (45 - totalHeight/2) s
+                debug = displayDebugInfo (15 - totalHeight/2) s 
+            in collage gameWidth totalHeight <| [background, p] ++ is ++ bullets ++ status ++ debug
 
 -- MAIN ----------------------------------
 
