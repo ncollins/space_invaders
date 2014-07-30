@@ -25,6 +25,7 @@ data State = GameOver Int | Game GameState
 type GameState = { invaders: [Invader]
                  , player: Player
                  , bullets: [Bullet]
+                 , explosions: [Explosion]
                  , time: Time
                  , input: Input
                  , score: Int }
@@ -35,6 +36,8 @@ type Player = { x: Float, y: Float, dx: Float, dy: Float }
 
 type Bullet = { x: Float, y: Float, dx: Float, dy: Float, shotAt: Time }
 
+type Explosion = { x: Float, y: Float, alpha: Float }
+
 invaders = map (\n -> { x = n*unitWidth - 250, y = 200, dx = 10, dy = 0 }) [1..8]
 
 player : Player
@@ -44,6 +47,7 @@ start : GameState
 start = { invaders = invaders
         ,  player = player
         , bullets = []
+        , explosions = []
         , time = 0.0
         , input = { x = 0, y = 0, space = False, counter = 0, time = 0 }
         , score = 0 }
@@ -71,6 +75,9 @@ movePlayer input player =
   let bound x = max (20 - gameWidth/2) (min x (gameWidth/2 - 20))
   in
   { player | x <- bound <| player.x + 10 * toFloat input.x }
+
+updateExplosions : [Explosion] -> [Explosion]
+updateExplosions es = map (\e -> { e | alpha <- max 0 (e.alpha - 0.05) }) es
   
 updateBullets : Float -> GameState -> Input -> [Bullet] -> [Bullet]
 updateBullets interval s i bs =
@@ -96,12 +103,16 @@ updateGame input state =
       (deadVader, liveVader) = if List.isEmpty state.invaders
                                then ([],[])
                                else List.partition (\v -> List.any (hit v) bullets) (moveInvaders interval state.invaders)
+      explosions = let old = (filter (\e -> e.alpha > 0) state.explosions)
+                       new = map (\i -> { x = i.x, y = i.y, alpha = 1 }) deadVader
+                   in (updateExplosions old) ++ new
   in
   { state | player <- movePlayer input state.player
           , invaders <- liveVader
           , time <- input.time
           , input <- input 
           , bullets <- bullets
+          , explosions <- explosions
           , score <- state.score + (length deadVader)}
 
 update : Input -> State -> State
@@ -130,17 +141,13 @@ input = lift4 combineInput Keyboard.arrows Keyboard.space counter time
 
 -- DISPLAY ----------------------------------
 
-invader fg bg = group [(filled fg (oval 50 40))
-                      ,(move (0, -10) (filled bg (rect 30 20))) -- mouth
-                      ,(move (8, 10) (filled bg (rect 10 5))) -- eye
-                      ,(move (-8, 10) (filled bg (rect 10 5))) -- eye
-                      ,(move (0, -7) (filled fg (rect 5 15)))  -- tooth
-                      ,(move (8, -7) (filled fg (rect 5 15)))  -- tooth
-                      ,(move (-8, -7) (filled fg (rect 5 15)))  -- tooth
-                      ] |> Graphics.Collage.scale (4/5)
 
 displayInvader : Invader -> Form
 displayInvader i = move (i.x, i.y) (invader red bgColor)
+
+displayExplosion : Explosion -> Form
+displayExplosion e =
+    move (e.x, e.y) (Graphics.Collage.alpha e.alpha explosion)
 
 displayPlayer : Player -> Form
 displayPlayer p = let translate = move (p.x, p.y)
@@ -163,10 +170,11 @@ displayGame : GameState -> Element
 displayGame s = let is = map displayInvader s.invaders
                     p = displayPlayer s.player
                     bullets = map displayBullet s.bullets
+                    explosions = map displayExplosion s.explosions
                     background = filled bgColor (rect gameWidth totalHeight)
                     status = displayGameStatus (45 - totalHeight/2) s
                     debug = displayDebugInfo (15 - totalHeight/2) s 
-                in collage gameWidth totalHeight <| [background, p] ++ is ++ bullets ++ status ++ debug
+                in collage gameWidth totalHeight <| [background, p] ++ is ++ bullets ++ explosions ++ status ++ debug
 
 display : State -> Element
 display state =
@@ -177,3 +185,27 @@ display state =
 -- MAIN ----------------------------------
 
 main = lift display (foldp update (Game start) input)
+
+-- VISUAL
+
+invader fg bg = group [(filled fg (oval 50 40))
+                      ,(move (0, -10) (filled bg (rect 30 20))) -- mouth
+                      ,(move (8, 10) (filled bg (rect 10 5))) -- eye
+                      ,(move (-8, 10) (filled bg (rect 10 5))) -- eye
+                      ,(move (0, -7) (filled fg (rect 5 15)))  -- tooth
+                      ,(move (8, -7) (filled fg (rect 5 15)))  -- tooth
+                      ,(move (-8, -7) (filled fg (rect 5 15)))  -- tooth
+                      ] |> Graphics.Collage.scale (4/5)
+
+explosion =
+    let reds = [filled red (polygon [(0, -5), (0, 5), (30, 0)])
+               , filled red (polygon [(0, 5), (-30, 10), (20, -20)])
+               ,filled red (polygon [(10, 0), (10, 20), (-30, -20)])
+               ]
+        yellows = [filled yellow (polygon [(0, -5), (0, 5), (30, 0)])
+                  , filled yellow (polygon [(0, 5), (-30, 10), (20, -20)])
+                  ,filled yellow (polygon [(10, 0), (10, 20), (-30, -20)])
+                  ]
+        rot120 = map (rotate (degrees 125))
+        scale60 = map (scale 0.6)
+    in (rot120 (reds ++ (scale60 yellows))) ++ reds ++ (scale60 yellows) |> group |> Graphics.Collage.scale (4/5)
