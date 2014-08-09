@@ -82,15 +82,18 @@ updateExplosions es = map (\e -> { e | alpha <- max 0 (e.alpha - 0.05) }) es
   
 updateBullets : Float -> GameState -> Input -> [Bullet] -> [Bullet]
 updateBullets interval s i bs =
-  let move b = {b | y <- b.y + interval * b.dy }
+  let dy = 100
+      move b = {b | y <- b.y + interval * b.dy }
       someBullets = not (List.isEmpty bs)
       lastShot = if someBullets  then Just (head bs).shotAt else Nothing
       newBullet = case (i.space, lastShot) of
                         (False, _)      -> Nothing
                         (True, Just t)  -> if (i.time - t) < 500 -- MAGIC
                                            then Nothing
-                                           else Just { x = s.player.x, y = s.player.y, dx = 0, dy = 100, shotAt = i.time }
-                        (True, Nothing) -> Just { x = s.player.x, y = s.player.y, dx = 0, dy = 100, shotAt = i.time }
+                                           else Just { x = s.player.x, y = s.player.y
+                                                     , dx = 0, dy = dy, shotAt = i.time }
+                        (True, Nothing) -> Just { x = s.player.x, y = s.player.y
+                                                , dx = 0, dy = dy, shotAt = i.time }
   in case newBullet of
      Nothing -> (filter inGameArea . map move) bs
      Just b -> (filter inGameArea . map move) (b::bs)
