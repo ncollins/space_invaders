@@ -127,7 +127,9 @@ update input state =
         GameOver s  -> GameOver s
         Game prev   -> let new = updateGame input prev
                     in
-                       if not (new.invaders == []) then Game new else GameOver new.score
+                       if new.invaders == [] || new.lives == 0
+                       then GameOver new.score
+                       else Game new
 
 -- INPUT ----------------------------------
 
