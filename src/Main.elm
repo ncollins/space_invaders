@@ -30,7 +30,7 @@ type GameState = { invaders: [Invader]
                  , input: Input
                  , score: Int }
 
-type Invader = { x: Float, y: Float, dx: Float, dy: Float }
+type Invader = { x: Float, y: Float, dx: Float, dy: Float, points: Int }
 
 type Player = { x: Float, y: Float, dx: Float, dy: Float }
 
@@ -38,7 +38,8 @@ type Bullet = { x: Float, y: Float, dx: Float, dy: Float, shotAt: Time }
 
 type Explosion = { x: Float, y: Float, alpha: Float }
 
-invaders = map (\n -> { x = n*unitWidth - 250, y = 200, dx = 10, dy = 0 }) [1..8]
+invaders = map (\n -> { x = n*unitWidth - 250, y = 200, dx = 10, dy = 0 , points = 10}) [1..8]
+           ++ (map (\n -> { x = n*unitWidth - 250, y = 240, dx = 10, dy = 0 , points = 20}) [1..8])
 
 player : Player
 player = { x = 0, y = -200, dx = 0, dy = 0 }
@@ -113,7 +114,7 @@ updateGame input state =
           , input <- input 
           , bullets <- bullets
           , explosions <- explosions
-          , score <- state.score + (length deadVader)}
+          , score <- state.score + sum (map (\i -> i.points) deadVader) }
 
 update : Input -> State -> State
 update input state =
@@ -121,7 +122,7 @@ update input state =
         GameOver s  -> GameOver s
         Game prev   -> let new = updateGame input prev
                     in
-                       if new.score < 8 then Game new else GameOver new.score
+                       if not (new.invaders == []) then Game new else GameOver new.score
 
 -- INPUT ----------------------------------
 
@@ -143,7 +144,11 @@ input = lift4 combineInput Keyboard.arrows Keyboard.space counter time
 
 
 displayInvader : Invader -> Form
-displayInvader i = move (i.x, i.y) (invader red bgColor)
+displayInvader i = 
+    case i.points of
+        10 -> move (i.x, i.y) (invader red bgColor)
+        20 -> move (i.x, i.y) (invader blue bgColor)
+        _  -> move (i.x, i.y) (invader purple bgColor)
 
 displayExplosion : Explosion -> Form
 displayExplosion e =
