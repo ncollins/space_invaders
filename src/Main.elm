@@ -28,7 +28,8 @@ type GameState = { invaders: [Invader]
                  , explosions: [Explosion]
                  , time: Time
                  , input: Input
-                 , score: Int }
+                 , score: Int
+                 , lives: Int }
 
 type Invader = { x: Float, y: Float, dx: Float, dy: Float, points: Int }
 
@@ -51,7 +52,8 @@ start = { invaders = invaders
         , explosions = []
         , time = 0.0
         , input = { x = 0, y = 0, space = False, counter = 0, time = 0 }
-        , score = 0 }
+        , score = 0
+        , lives = 3 }
 
 -- UPDATE ----------------------------------
 
