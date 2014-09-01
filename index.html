@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="UTF-8"><title>Main</title><script type="text/javascript" src="elm/elm-runtime.js"></script><script type="text/javascript">Elm.Main = Elm.Main || {};
+<html><head><meta charset="UTF-8"><title>Main</title><script type="text/javascript" src="/home/nick/.cabal/share/Elm-0.12.3/elm-runtime.js"></script><script type="text/javascript">Elm.Main = Elm.Main || {};
 Elm.Main.make = function (_elm) {
    "use strict";
    _elm.Main = _elm.Main || {};
@@ -8,8 +8,8 @@ Elm.Main.make = function (_elm) {
    var _N = Elm.Native,
    _U = _N.Utils.make(_elm),
    _L = _N.List.make(_elm),
+   _A = _N.Array.make(_elm),
    _E = _N.Error.make(_elm),
-   _J = _N.JavaScript.make(_elm),
    $moduleName = "Main";
    var Basics = Elm.Basics.make(_elm);
    var Color = Elm.Color.make(_elm);
@@ -21,12 +21,188 @@ Elm.Main.make = function (_elm) {
    var List = Elm.List.make(_elm);
    var Maybe = Elm.Maybe.make(_elm);
    var Native = Native || {};
+   Native.Json = Elm.Native.Json.make(_elm);
+   var Native = Native || {};
    Native.Ports = Elm.Native.Ports.make(_elm);
    var Signal = Elm.Signal.make(_elm);
    var String = Elm.String.make(_elm);
    var Text = Elm.Text.make(_elm);
    var Time = Elm.Time.make(_elm);
    var _op = {};
+   var explosion = function () {
+      var scale60 = List.map(Graphics.Collage.scale(0.6));
+      var rot120 = List.map(Graphics.Collage.rotate(Basics.degrees(125)));
+      var yellows = _L.fromArray([A2(Graphics.Collage.filled,
+                                 Color.yellow,
+                                 Graphics.Collage.polygon(_L.fromArray([{ctor: "_Tuple2"
+                                                                        ,_0: 0
+                                                                        ,_1: -5}
+                                                                       ,{ctor: "_Tuple2"
+                                                                        ,_0: 0
+                                                                        ,_1: 5}
+                                                                       ,{ctor: "_Tuple2"
+                                                                        ,_0: 30
+                                                                        ,_1: 0}])))
+                                 ,A2(Graphics.Collage.filled,
+                                 Color.yellow,
+                                 Graphics.Collage.polygon(_L.fromArray([{ctor: "_Tuple2"
+                                                                        ,_0: 0
+                                                                        ,_1: 5}
+                                                                       ,{ctor: "_Tuple2"
+                                                                        ,_0: -30
+                                                                        ,_1: 10}
+                                                                       ,{ctor: "_Tuple2"
+                                                                        ,_0: 20
+                                                                        ,_1: -20}])))
+                                 ,A2(Graphics.Collage.filled,
+                                 Color.yellow,
+                                 Graphics.Collage.polygon(_L.fromArray([{ctor: "_Tuple2"
+                                                                        ,_0: 10
+                                                                        ,_1: 0}
+                                                                       ,{ctor: "_Tuple2"
+                                                                        ,_0: 10
+                                                                        ,_1: 20}
+                                                                       ,{ctor: "_Tuple2"
+                                                                        ,_0: -30
+                                                                        ,_1: -20}])))]);
+      var reds = _L.fromArray([A2(Graphics.Collage.filled,
+                              Color.red,
+                              Graphics.Collage.polygon(_L.fromArray([{ctor: "_Tuple2"
+                                                                     ,_0: 0
+                                                                     ,_1: -5}
+                                                                    ,{ctor: "_Tuple2"
+                                                                     ,_0: 0
+                                                                     ,_1: 5}
+                                                                    ,{ctor: "_Tuple2"
+                                                                     ,_0: 30
+                                                                     ,_1: 0}])))
+                              ,A2(Graphics.Collage.filled,
+                              Color.red,
+                              Graphics.Collage.polygon(_L.fromArray([{ctor: "_Tuple2"
+                                                                     ,_0: 0
+                                                                     ,_1: 5}
+                                                                    ,{ctor: "_Tuple2"
+                                                                     ,_0: -30
+                                                                     ,_1: 10}
+                                                                    ,{ctor: "_Tuple2"
+                                                                     ,_0: 20
+                                                                     ,_1: -20}])))
+                              ,A2(Graphics.Collage.filled,
+                              Color.red,
+                              Graphics.Collage.polygon(_L.fromArray([{ctor: "_Tuple2"
+                                                                     ,_0: 10
+                                                                     ,_1: 0}
+                                                                    ,{ctor: "_Tuple2"
+                                                                     ,_0: 10
+                                                                     ,_1: 20}
+                                                                    ,{ctor: "_Tuple2"
+                                                                     ,_0: -30
+                                                                     ,_1: -20}])))]);
+      return Graphics.Collage.scale(4 / 5)(Graphics.Collage.group(_L.append(rot120(_L.append(reds,
+      scale60(yellows))),
+      _L.append(reds,
+      scale60(yellows)))));
+   }();
+   var invader = F2(function (fg,
+   bg) {
+      return Graphics.Collage.scale(4 / 5)(Graphics.Collage.group(_L.fromArray([A2(Graphics.Collage.filled,
+                                                                               fg,
+                                                                               A2(Graphics.Collage.oval,
+                                                                               50,
+                                                                               40))
+                                                                               ,A2(Graphics.Collage.move,
+                                                                               {ctor: "_Tuple2"
+                                                                               ,_0: 0
+                                                                               ,_1: -10},
+                                                                               A2(Graphics.Collage.filled,
+                                                                               bg,
+                                                                               A2(Graphics.Collage.rect,
+                                                                               30,
+                                                                               20)))
+                                                                               ,A2(Graphics.Collage.move,
+                                                                               {ctor: "_Tuple2"
+                                                                               ,_0: 8
+                                                                               ,_1: 10},
+                                                                               A2(Graphics.Collage.filled,
+                                                                               bg,
+                                                                               A2(Graphics.Collage.rect,
+                                                                               10,
+                                                                               5)))
+                                                                               ,A2(Graphics.Collage.move,
+                                                                               {ctor: "_Tuple2"
+                                                                               ,_0: -8
+                                                                               ,_1: 10},
+                                                                               A2(Graphics.Collage.filled,
+                                                                               bg,
+                                                                               A2(Graphics.Collage.rect,
+                                                                               10,
+                                                                               5)))
+                                                                               ,A2(Graphics.Collage.move,
+                                                                               {ctor: "_Tuple2"
+                                                                               ,_0: 0
+                                                                               ,_1: -7},
+                                                                               A2(Graphics.Collage.filled,
+                                                                               fg,
+                                                                               A2(Graphics.Collage.rect,
+                                                                               5,
+                                                                               15)))
+                                                                               ,A2(Graphics.Collage.move,
+                                                                               {ctor: "_Tuple2"
+                                                                               ,_0: 8
+                                                                               ,_1: -7},
+                                                                               A2(Graphics.Collage.filled,
+                                                                               fg,
+                                                                               A2(Graphics.Collage.rect,
+                                                                               5,
+                                                                               15)))
+                                                                               ,A2(Graphics.Collage.move,
+                                                                               {ctor: "_Tuple2"
+                                                                               ,_0: -8
+                                                                               ,_1: -7},
+                                                                               A2(Graphics.Collage.filled,
+                                                                               fg,
+                                                                               A2(Graphics.Collage.rect,
+                                                                               5,
+                                                                               15)))])));
+   });
+   var displayDebugInfo = F2(function (top,
+   s) {
+      return function () {
+         var text = function ($) {
+            return Graphics.Collage.toForm(Text.asText($));
+         }(s.input);
+         var background = A2(Graphics.Collage.filled,
+         Color.grey,
+         A2(Graphics.Collage.rect,
+         500,
+         30));
+         return A2(List.map,
+         Graphics.Collage.move({ctor: "_Tuple2"
+                               ,_0: 0
+                               ,_1: top}),
+         _L.fromArray([background
+                      ,text]));
+      }();
+   });
+   var displayGameStatus = F2(function (top,
+   s) {
+      return function () {
+         var text = function ($) {
+            return Graphics.Collage.toForm(Text.asText($));
+         }(s.score);
+         var background = A2(Graphics.Collage.filled,
+         Color.lightGreen,
+         A2(Graphics.Collage.rect,
+         500,
+         30));
+         return A2(List.map,
+         Graphics.Collage.move({ctor: "_Tuple2"
+                               ,_0: 0
+                               ,_1: top}),
+         _L.fromArray([background
+                      ,text]));
+      }();
+   });
    var displayBullet = function (b) {
       return A2(Graphics.Collage.move,
       {ctor: "_Tuple2"
@@ -53,68 +229,15 @@ Elm.Main.make = function (_elm) {
          20)));
       }();
    };
-   var invader = F2(function (fg,
-   bg) {
-      return Graphics.Collage.scale(4 / 5)(Graphics.Collage.group(_J.toList([A2(Graphics.Collage.filled,
-                                                                            fg,
-                                                                            A2(Graphics.Collage.oval,
-                                                                            50,
-                                                                            40))
-                                                                            ,A2(Graphics.Collage.move,
-                                                                            {ctor: "_Tuple2"
-                                                                            ,_0: 0
-                                                                            ,_1: -10},
-                                                                            A2(Graphics.Collage.filled,
-                                                                            bg,
-                                                                            A2(Graphics.Collage.rect,
-                                                                            30,
-                                                                            20)))
-                                                                            ,A2(Graphics.Collage.move,
-                                                                            {ctor: "_Tuple2"
-                                                                            ,_0: 8
-                                                                            ,_1: 10},
-                                                                            A2(Graphics.Collage.filled,
-                                                                            bg,
-                                                                            A2(Graphics.Collage.rect,
-                                                                            10,
-                                                                            5)))
-                                                                            ,A2(Graphics.Collage.move,
-                                                                            {ctor: "_Tuple2"
-                                                                            ,_0: -8
-                                                                            ,_1: 10},
-                                                                            A2(Graphics.Collage.filled,
-                                                                            bg,
-                                                                            A2(Graphics.Collage.rect,
-                                                                            10,
-                                                                            5)))
-                                                                            ,A2(Graphics.Collage.move,
-                                                                            {ctor: "_Tuple2"
-                                                                            ,_0: 0
-                                                                            ,_1: -7},
-                                                                            A2(Graphics.Collage.filled,
-                                                                            fg,
-                                                                            A2(Graphics.Collage.rect,
-                                                                            5,
-                                                                            15)))
-                                                                            ,A2(Graphics.Collage.move,
-                                                                            {ctor: "_Tuple2"
-                                                                            ,_0: 8
-                                                                            ,_1: -7},
-                                                                            A2(Graphics.Collage.filled,
-                                                                            fg,
-                                                                            A2(Graphics.Collage.rect,
-                                                                            5,
-                                                                            15)))
-                                                                            ,A2(Graphics.Collage.move,
-                                                                            {ctor: "_Tuple2"
-                                                                            ,_0: -8
-                                                                            ,_1: -7},
-                                                                            A2(Graphics.Collage.filled,
-                                                                            fg,
-                                                                            A2(Graphics.Collage.rect,
-                                                                            5,
-                                                                            15)))])));
-   });
+   var displayExplosion = function (e) {
+      return A2(Graphics.Collage.move,
+      {ctor: "_Tuple2"
+      ,_0: e.x
+      ,_1: e.y},
+      A2(Graphics.Collage.alpha,
+      e.alpha,
+      explosion));
+   };
    var combineInput = F4(function (arrows,
    space,
    counter,
@@ -143,12 +266,17 @@ Elm.Main.make = function (_elm) {
       20) < 0 && _U.cmp(Basics.abs(e1.y - e2.y),
       10) < 0;
    });
-   var movePlayer = F2(function (input,
-   player) {
-      return _U.replace([["x"
-                         ,player.x + 10 * Basics.toFloat(input.x)]],
-      player);
-   });
+   var updateExplosions = function (es) {
+      return A2(List.map,
+      function (e) {
+         return _U.replace([["alpha"
+                            ,A2(Basics.max,
+                            0,
+                            e.alpha - 5.0e-2)]],
+         e);
+      },
+      es);
+   };
    var moveInvader = F3(function (time,
    direction,
    i) {
@@ -180,6 +308,14 @@ Elm.Main.make = function (_elm) {
                 ,dy: 0
                 ,x: 0
                 ,y: -200};
+   var Explosion = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,alpha: c
+             ,x: a
+             ,y: b};
+   });
    var Bullet = F5(function (a,
    b,
    c,
@@ -202,28 +338,43 @@ Elm.Main.make = function (_elm) {
              ,x: a
              ,y: b};
    });
-   var Invader = F4(function (a,
-   b,
-   c,
-   d) {
-      return {_: {}
-             ,dx: c
-             ,dy: d
-             ,x: a
-             ,y: b};
-   });
-   var GameState = F5(function (a,
+   var Invader = F5(function (a,
    b,
    c,
    d,
    e) {
       return {_: {}
-             ,bullets: c
-             ,input: e
-             ,invaders: a
-             ,player: b
-             ,time: d};
+             ,dx: c
+             ,dy: d
+             ,points: e
+             ,x: a
+             ,y: b};
    });
+   var GameState = F8(function (a,
+   b,
+   c,
+   d,
+   e,
+   f,
+   g,
+   h) {
+      return {_: {}
+             ,bullets: c
+             ,explosions: d
+             ,input: f
+             ,invaders: a
+             ,lives: h
+             ,player: b
+             ,score: g
+             ,time: e};
+   });
+   var Game = function (a) {
+      return {ctor: "Game",_0: a};
+   };
+   var GameOver = function (a) {
+      return {ctor: "GameOver"
+             ,_0: a};
+   };
    var tickPeriod = Time.second / 20;
    var counter = A3(Signal.foldp,
    F2(function (_v0,c) {
@@ -243,13 +394,36 @@ Elm.Main.make = function (_elm) {
    var ticksPerSecond = 20;
    var bgColor = Color.black;
    var displayInvader = function (i) {
-      return A2(Graphics.Collage.move,
-      {ctor: "_Tuple2"
-      ,_0: i.x
-      ,_1: i.y},
-      A2(invader,Color.red,bgColor));
+      return function () {
+         var _v2 = i.points;
+         switch (_v2)
+         {case 10:
+            return A2(Graphics.Collage.move,
+              {ctor: "_Tuple2"
+              ,_0: i.x
+              ,_1: i.y},
+              A2(invader,Color.red,bgColor));
+            case 20:
+            return A2(Graphics.Collage.move,
+              {ctor: "_Tuple2"
+              ,_0: i.x
+              ,_1: i.y},
+              A2(invader,
+              Color.blue,
+              bgColor));}
+         return A2(Graphics.Collage.move,
+         {ctor: "_Tuple2"
+         ,_0: i.x
+         ,_1: i.y},
+         A2(invader,
+         Color.purple,
+         bgColor));
+      }();
    };
+   var debugHeight = 30;
+   var statusHeight = 30;
    var gameHeight = 500;
+   var totalHeight = gameHeight + statusHeight + debugHeight;
    var gameWidth = 500;
    var inGameArea = function (e) {
       return _U.cmp(Basics.abs(e.x),
@@ -261,42 +435,55 @@ Elm.Main.make = function (_elm) {
    i,
    bs) {
       return function () {
+         var vaderBullet = function () {
+            var d = 10;
+            var lineOfSight = A2(List.filter,
+            function (i) {
+               return _U.cmp(Basics.abs(i.x - s.player.x),
+               d) < 0;
+            },
+            s.invaders);
+            var attacker = _U.eq(lineOfSight,
+            _L.fromArray([])) ? Maybe.Nothing : Maybe.Just(List.head(lineOfSight));
+            return "not finished yet!";
+         }();
          var someBullets = Basics.not(List.isEmpty(bs));
          var lastShot = someBullets ? Maybe.Just(List.head(bs).shotAt) : Maybe.Nothing;
+         var move = function (b) {
+            return _U.replace([["y"
+                               ,b.y + interval * b.dy]],
+            b);
+         };
+         var dy = 100;
          var newBullet = function () {
-            var _v2 = {ctor: "_Tuple2"
+            var _v3 = {ctor: "_Tuple2"
                       ,_0: i.space
                       ,_1: lastShot};
-            switch (_v2.ctor)
-            {case "_Tuple2": switch (_v2._0)
+            switch (_v3.ctor)
+            {case "_Tuple2": switch (_v3._0)
                  {case false:
                     return Maybe.Nothing;
-                    case true: switch (_v2._1.ctor)
+                    case true: switch (_v3._1.ctor)
                       {case "Just":
-                         return _U.cmp(i.time - _v2._1._0,
+                         return _U.cmp(i.time - _v3._1._0,
                            500) < 0 ? Maybe.Nothing : Maybe.Just({_: {}
                                                                  ,dx: 0
-                                                                 ,dy: 100
+                                                                 ,dy: dy
                                                                  ,shotAt: i.time
                                                                  ,x: s.player.x
                                                                  ,y: s.player.y});
                          case "Nothing":
                          return Maybe.Just({_: {}
                                            ,dx: 0
-                                           ,dy: 100
+                                           ,dy: dy
                                            ,shotAt: i.time
                                            ,x: s.player.x
                                            ,y: s.player.y});}
                       break;}
                  break;}
             _E.Case($moduleName,
-            "between lines 68 and 74");
+            "between lines 91 and 99");
          }();
-         var move = function (b) {
-            return _U.replace([["y"
-                               ,b.y + interval * b.dy]],
-            b);
-         };
          return function () {
             switch (newBullet.ctor)
             {case "Just":
@@ -310,11 +497,26 @@ Elm.Main.make = function (_elm) {
                     return List.filter(inGameArea)(List.map(move)($));
                  }(bs);}
             _E.Case($moduleName,
-            "between lines 74 and 77");
+            "between lines 104 and 107");
          }();
       }();
    });
-   var update = F2(function (input,
+   var movePlayer = F2(function (input,
+   player) {
+      return function () {
+         var bound = function (x) {
+            return A2(Basics.max,
+            20 - gameWidth / 2,
+            A2(Basics.min,
+            x,
+            gameWidth / 2 - 20));
+         };
+         return _U.replace([["x"
+                            ,bound(player.x + 10 * Basics.toFloat(input.x))]],
+         player);
+      }();
+   });
+   var updateGame = F2(function (input,
    state) {
       return function () {
          var interval = _U.eq(state.time,
@@ -325,8 +527,8 @@ Elm.Main.make = function (_elm) {
          input,
          state.bullets);
          var $ = List.isEmpty(state.invaders) ? {ctor: "_Tuple2"
-                                                ,_0: _J.toList([])
-                                                ,_1: _J.toList([])} : A2(List.partition,
+                                                ,_0: _L.fromArray([])
+                                                ,_1: _L.fromArray([])} : A2(List.partition,
          function (v) {
             return A2(List.any,
             hit(v),
@@ -337,6 +539,23 @@ Elm.Main.make = function (_elm) {
          state.invaders)),
          deadVader = $._0,
          liveVader = $._1;
+         var explosions = function () {
+            var $new = A2(List.map,
+            function (i) {
+               return {_: {}
+                      ,alpha: 1
+                      ,x: i.x
+                      ,y: i.y};
+            },
+            deadVader);
+            var old = A2(List.filter,
+            function (e) {
+               return _U.cmp(e.alpha,0) > 0;
+            },
+            state.explosions);
+            return _L.append(updateExplosions(old),
+            $new);
+         }();
          return _U.replace([["player"
                             ,A2(movePlayer,
                             input,
@@ -344,23 +563,52 @@ Elm.Main.make = function (_elm) {
                            ,["invaders",liveVader]
                            ,["time",input.time]
                            ,["input",input]
-                           ,["bullets",bullets]],
+                           ,["bullets",bullets]
+                           ,["explosions",explosions]
+                           ,["score"
+                            ,state.score + List.sum(A2(List.map,
+                            function (i) {
+                               return i.points;
+                            },
+                            deadVader))]],
          state);
       }();
    });
-   var display = function (s) {
+   var update = F2(function (input,
+   state) {
       return function () {
-         var r = A2(Graphics.Collage.filled,
-         Color.white,
-         A2(Graphics.Collage.rect,
-         500,
-         30));
-         var timer = Graphics.Collage.toForm(Text.asText(s.input));
+         switch (state.ctor)
+         {case "Game":
+            return function () {
+                 var $new = A2(updateGame,
+                 input,
+                 state._0);
+                 return _U.eq($new.invaders,
+                 _L.fromArray([])) || _U.eq($new.lives,
+                 0) ? GameOver($new.score) : Game($new);
+              }();
+            case "GameOver":
+            return GameOver(state._0);}
+         _E.Case($moduleName,
+         "between lines 131 and 137");
+      }();
+   });
+   var displayGame = function (s) {
+      return function () {
+         var debug = A2(displayDebugInfo,
+         15 - totalHeight / 2,
+         s);
+         var status = A2(displayGameStatus,
+         45 - totalHeight / 2,
+         s);
          var background = A2(Graphics.Collage.filled,
          bgColor,
          A2(Graphics.Collage.rect,
          gameWidth,
-         gameHeight));
+         totalHeight));
+         var explosions = A2(List.map,
+         displayExplosion,
+         s.explosions);
          var bullets = A2(List.map,
          displayBullet,
          s.bullets);
@@ -370,25 +618,49 @@ Elm.Main.make = function (_elm) {
          s.invaders);
          return A2(Graphics.Collage.collage,
          gameWidth,
-         gameHeight)(_L.append(_J.toList([background
-                                         ,p]),
+         totalHeight)(_L.append(_L.fromArray([background
+                                             ,p]),
          _L.append(is,
          _L.append(bullets,
-         _J.toList([r,timer])))));
+         _L.append(explosions,
+         _L.append(status,debug))))));
+      }();
+   };
+   var display = function (state) {
+      return function () {
+         switch (state.ctor)
+         {case "Game":
+            return displayGame(state._0);
+            case "GameOver":
+            return Text.asText(state._0);}
+         _E.Case($moduleName,
+         "between lines 198 and 200");
       }();
    };
    var unitWidth = 50;
-   var invaders = A2(List.map,
+   var invaders = _L.append(A2(List.map,
    function (n) {
       return {_: {}
              ,dx: 10
              ,dy: 0
+             ,points: 10
              ,x: n * unitWidth - 250
              ,y: 200};
    },
-   _L.range(1,8));
-   var state = {_: {}
-               ,bullets: _J.toList([])
+   _L.range(1,8)),
+   A2(List.map,
+   function (n) {
+      return {_: {}
+             ,dx: 10
+             ,dy: 0
+             ,points: 20
+             ,x: n * unitWidth - 250
+             ,y: 240};
+   },
+   _L.range(1,8)));
+   var start = {_: {}
+               ,bullets: _L.fromArray([])
+               ,explosions: _L.fromArray([])
                ,input: {_: {}
                        ,counter: 0
                        ,space: false
@@ -396,45 +668,60 @@ Elm.Main.make = function (_elm) {
                        ,x: 0
                        ,y: 0}
                ,invaders: invaders
+               ,lives: 3
                ,player: player
+               ,score: 0
                ,time: 0.0};
    var main = A2(Signal.lift,
    display,
    A3(Signal.foldp,
    update,
-   state,
+   Game(start),
    input));
    _elm.Main.values = {_op: _op
                       ,unitWidth: unitWidth
                       ,gameWidth: gameWidth
                       ,gameHeight: gameHeight
+                      ,statusHeight: statusHeight
+                      ,debugHeight: debugHeight
+                      ,totalHeight: totalHeight
                       ,bgColor: bgColor
                       ,ticksPerSecond: ticksPerSecond
                       ,tickPeriod: tickPeriod
                       ,invaders: invaders
                       ,player: player
-                      ,state: state
+                      ,start: start
                       ,inGameArea: inGameArea
                       ,moveInvader: moveInvader
                       ,moveInvaders: moveInvaders
                       ,movePlayer: movePlayer
+                      ,updateExplosions: updateExplosions
                       ,updateBullets: updateBullets
                       ,hit: hit
+                      ,updateGame: updateGame
                       ,update: update
                       ,counter: counter
                       ,time: time
                       ,combineInput: combineInput
                       ,input: input
-                      ,invader: invader
                       ,displayInvader: displayInvader
+                      ,displayExplosion: displayExplosion
                       ,displayPlayer: displayPlayer
                       ,displayBullet: displayBullet
+                      ,displayGameStatus: displayGameStatus
+                      ,displayDebugInfo: displayDebugInfo
+                      ,displayGame: displayGame
                       ,display: display
                       ,main: main
+                      ,invader: invader
+                      ,explosion: explosion
+                      ,GameOver: GameOver
+                      ,Game: Game
                       ,GameState: GameState
                       ,Invader: Invader
                       ,Player: Player
                       ,Bullet: Bullet
+                      ,Explosion: Explosion
                       ,Input: Input};
    return _elm.Main.values;
 };</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script><noscript></noscript></body></html>
