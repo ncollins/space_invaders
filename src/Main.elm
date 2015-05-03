@@ -70,7 +70,7 @@ moveInvaders time invaders =
   case invaders of
     [] -> []
     l::vs ->
-      case vs of
+      case List.reverse vs of
         [] -> [l]
         r::_ ->  
             if | l.x < -200 && l.dx < 0  -> List.map (moveInvader time -1.0) invaders
