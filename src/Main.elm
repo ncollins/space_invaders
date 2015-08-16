@@ -19,6 +19,7 @@ totalHeight = gameHeight + statusHeight + debugHeight
 bgColor = Color.black
 ticksPerSecond = 20
 tickPeriod = Time.second / 20 -- 10/sec
+downMovement = 20
 
 -- STATE ----------------------------------
 
@@ -73,8 +74,10 @@ moveInvaders time invaders =
       case List.reverse vs of
         [] -> [l]
         r::_ ->  
-            if | l.x < -200 && l.dx < 0  -> List.map (moveInvader time -1.0) invaders
-               | r.x > 200 && r.dx > 0   -> List.map (moveInvader time -1.0) invaders
+            if | (l.x < -200 && l.dx < 0)  || (r.x > 200 && r.dx > 0) ->
+                 invaders
+                 |> List.map (moveInvader time -1.0)
+                 |> List.map (\v -> { v | y <- v.y - downMovement})
                | otherwise               -> List.map (moveInvader time 1.0) invaders
 
 
