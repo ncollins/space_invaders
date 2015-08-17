@@ -16,6 +16,9 @@ statusHeight = 30
 debugHeight = 30
 totalHeight = gameHeight + statusHeight + debugHeight
 
+gameBottom = statusHeight + debugHeight - totalHeight / 2
+deadZone = gameBottom + 20
+
 bgColor = Color.black
 ticksPerSecond = 20
 tickPeriod = Time.second / 20 -- 10/sec
@@ -119,6 +122,7 @@ updateGame input state =
       explosions = let old = (List.filter (\e -> e.alpha > 0) state.explosions)
                        new = List.map (\i -> { x = i.x, y = i.y, alpha = 1 }) deadVader
                    in (updateExplosions old) ++ new
+      reachedBottom = List.any (\v -> v.y < deadZone) liveVader
   in
   { state | player <- movePlayer input state.player
           , invaders <- liveVader
@@ -126,7 +130,9 @@ updateGame input state =
           , input <- input 
           , bullets <- bullets
           , explosions <- explosions
-          , score <- state.score + List.sum (List.map (\i -> i.points) deadVader) }
+          , score <- state.score + List.sum (List.map (\i -> i.points) deadVader)
+          , lives <- if reachedBottom then 0 else state.lives
+  }
 
 update : Input -> State -> State
 update input state =
